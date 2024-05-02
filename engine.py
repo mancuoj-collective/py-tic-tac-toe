@@ -16,7 +16,7 @@ def print_board(board):
 def get_move(board):
     while True:
         try:
-            move = int(input(f"Enter move (1-{9}): ")) - 1
+            move = int(input("Enter move (1~9): ")) - 1
             if move < 0 or move >= 9:
                 raise ValueError
             if board[move] is not None:
