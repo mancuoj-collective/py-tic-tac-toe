@@ -27,9 +27,7 @@ def get_move(board):
 
 
 def make_move(board, move, player):
-    new = board.copy()
-    new[move] = player
-    return new
+    board[move] = player
 
 
 def check_winner(board):
@@ -61,7 +59,7 @@ def play_game():
     print_board(board)
     while True:
         move = get_move(board)
-        board = make_move(board, move, player)
+        make_move(board, move, player)
         print_board(board)
         winner = check_winner(board)
         if winner:
