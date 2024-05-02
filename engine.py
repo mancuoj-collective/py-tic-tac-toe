@@ -1,34 +1,14 @@
-BOARD_SIZE = 3
-
-
 def new_board():
-    """
-    >>> new_board()
-    [[None, None, None], [None, None, None], [None, None, None]]
-    """
-    return [[None for _ in range(BOARD_SIZE)] for _ in range(BOARD_SIZE)]
+    return [None] * 9
 
 
-def render_board(board):
-    """
-    >>> board = new_board()
-    >>> board[0][0] = "X"
-    >>> board[1][2] = "O"
-    >>> board[2][1] = "X"
-    >>> render_board(board)
-        0 1 2
-       -------
-    0 | X     |
-    1 |     O |
-    2 |   X   |
-       -------
-    """
-    print("    0 1 2")
+def print_board(board):
+    print("    1 2 3")
     print("   -------")
-    for row in range(BOARD_SIZE):
-        print(f"{row} | ", end="")
-        for col in range(BOARD_SIZE):
-            print(board[row][col] or " ", end=" ")
+    for row in range(3):
+        print(f"{row + 1} | ", end="")
+        for col in range(3):
+            print(board[row * 3 + col] or " ", end=" ")
         print("|")
     print("   -------")
 
@@ -36,27 +16,62 @@ def render_board(board):
 def get_move(board):
     while True:
         try:
-            row, col = map(
-                int, input("Enter row and column (0~2), separated by a space: ").split()
-            )
-            if row < 0 or row > BOARD_SIZE - 1 or col < 0 or col > BOARD_SIZE - 1:
-                print("Invalid input, please try again.")
-                continue
-            if board[row][col] is not None:
-                print("This square is already taken, please try again.")
-                continue
-            return row, col
+            move = int(input(f"Enter move (1-{9}): ")) - 1
+            if move < 0 or move >= 9:
+                raise ValueError
+            if board[move] is not None:
+                print("This square is already taken, try again.")
+            return move
         except ValueError:
-            print("Invalid input, please try again.")
+            print("Invalid input, try again.")
 
 
-def make_move(board, coord, player):
-    """
-    >>> old_board = [['X', None, None], [None, None, None], [None, 'O', 'O']]
-    >>> new_board = make_move(old_board, (1, 1), 'X')
-    >>> new_board[1][1]
-    'X'
-    """
-    new_board = board.copy()
-    new_board[coord[0]][coord[1]] = player
-    return new_board
+def make_move(board, move, player):
+    new = board.copy()
+    new[move] = player
+    return new
+
+
+def check_winner(board):
+    lines = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+    ]
+
+    for line in lines:
+        a, b, c = line
+        if board[a] and board[a] == board[b] == board[c]:
+            return board[a]
+    return None
+
+
+def check_draw(board):
+    return None not in board
+
+
+def play_game():
+    board = new_board()
+    player = "X"
+    print_board(board)
+    while True:
+        move = get_move(board)
+        board = make_move(board, move, player)
+        print_board(board)
+        winner = check_winner(board)
+        if winner:
+            print(f"{winner} wins!")
+            break
+        if check_draw(board):
+            print("Draw!")
+            break
+        player = "O" if player == "X" else "X"
+
+
+if __name__ == "__main__":
+    play_game()
