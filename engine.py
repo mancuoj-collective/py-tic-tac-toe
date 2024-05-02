@@ -43,8 +43,20 @@ def get_move(board):
                 print("Invalid input, please try again.")
                 continue
             if board[row][col] is not None:
-                print("This cell is already taken, please try again.")
+                print("This square is already taken, please try again.")
                 continue
             return row, col
         except ValueError:
             print("Invalid input, please try again.")
+
+
+def make_move(board, coord, player):
+    """
+    >>> old_board = [['X', None, None], [None, None, None], [None, 'O', 'O']]
+    >>> new_board = make_move(old_board, (1, 1), 'X')
+    >>> new_board[1][1]
+    'X'
+    """
+    new_board = board.copy()
+    new_board[coord[0]][coord[1]] = player
+    return new_board
