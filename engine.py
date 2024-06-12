@@ -1,3 +1,6 @@
+import random
+
+
 def new_board():
     return [None] * 9
 
@@ -24,6 +27,11 @@ def get_move(board):
             return move
         except ValueError:
             print("Invalid input, try again.")
+
+
+def get_random_ai_move(board):
+    available_moves = [i for i in range(9) if board[i] is None]
+    return random.choice(available_moves)
 
 
 def make_move(board, move, player):
@@ -58,7 +66,10 @@ def play_game():
     player = "X"
     print_board(board)
     while True:
-        move = get_move(board)
+        if player == "X":
+            move = get_move(board)
+        else:
+            move = get_random_ai_move(board)
         make_move(board, move, player)
         print_board(board)
         winner = check_winner(board)
