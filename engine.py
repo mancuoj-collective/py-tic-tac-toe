@@ -24,14 +24,10 @@ def get_move(board):
                 raise ValueError
             if board[move] is not None:
                 print("This square is already taken, try again.")
+                continue
             return move
         except ValueError:
             print("Invalid input, try again.")
-
-
-def get_random_ai_move(board):
-    available_moves = [i for i in range(9) if board[i] is None]
-    return random.choice(available_moves)
 
 
 def make_move(board, move, player):
@@ -61,6 +57,54 @@ def check_draw(board):
     return None not in board
 
 
+def get_random_ai_move(board):
+    available_moves = [i for i in range(9) if board[i] is None]
+    return random.choice(available_moves)
+
+
+def get_ai_move(board):
+    best_score = float("-inf")
+    best_move = None
+    for i in range(len(board)):
+        if board[i] is None:
+            board[i] = "O"
+            score = minimax(board, False)
+            board[i] = None
+            if score > best_score:
+                best_score = score
+                best_move = i
+    return best_move
+
+
+def minimax(board, is_maximizing):
+    winner = check_winner(board)
+    if winner == "X":
+        return -10
+    elif winner == "O":
+        return 10
+    elif check_draw(board):
+        return 0
+
+    if is_maximizing:
+        best_score = float("-inf")
+        for i in range(len(board)):
+            if board[i] is None:
+                board[i] = "O"
+                score = minimax(board, False)
+                board[i] = None
+                best_score = max(score, best_score)
+        return best_score
+    else:
+        best_score = float("inf")
+        for i in range(len(board)):
+            if board[i] is None:
+                board[i] = "X"
+                score = minimax(board, True)
+                board[i] = None
+                best_score = min(score, best_score)
+        return best_score
+
+
 def play_game():
     board = new_board()
     player = "X"
@@ -69,7 +113,7 @@ def play_game():
         if player == "X":
             move = get_move(board)
         else:
-            move = get_random_ai_move(board)
+            move = get_ai_move(board)
         make_move(board, move, player)
         print_board(board)
         winner = check_winner(board)
