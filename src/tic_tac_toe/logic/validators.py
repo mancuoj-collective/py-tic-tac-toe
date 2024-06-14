@@ -4,6 +4,7 @@ import re
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from tic_tac_toe.game.players import Player
     from tic_tac_toe.models.game_state import GameState
     from tic_tac_toe.models.grid import Grid
     from tic_tac_toe.models.mark import Mark
@@ -51,3 +52,8 @@ def validate_winner(grid: Grid, starting_mark: Mark, winner: Mark | None) -> Non
         else:
             if grid.o_count != grid.x_count:
                 raise InvalidGameState("Wrong number of Os")
+
+
+def validate_players(player1: Player, player2: Player) -> None:
+    if player1.mark is player2.mark:
+        raise ValueError("Players must use different marks")
