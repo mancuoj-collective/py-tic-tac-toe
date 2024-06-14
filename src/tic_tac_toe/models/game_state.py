@@ -2,8 +2,12 @@ import re
 from dataclasses import dataclass
 from functools import cached_property
 
+from tic_tac_toe.logic.exceptions import InvalidMove
+from tic_tac_toe.logic.validators import validate_game_state
+
 from .grid import Grid
 from .mark import Mark
+from .move import Move
 
 WINNING_PATTERNS = (
     "???......",
@@ -21,6 +25,9 @@ WINNING_PATTERNS = (
 class GameState:
     grid: Grid
     starting_mark: Mark = Mark.CROSS
+
+    def __post_init__(self) -> None:
+        validate_game_state(self)
 
     @cached_property
     def current_mark(self) -> Mark:
@@ -48,3 +55,36 @@ class GameState:
                 if re.match(pattern.replace("?", mark), self.grid.cells):
                     return mark
         return None
+
+    @cached_property
+    def winning_cells(self) -> list[int]:
+        for pattern in WINNING_PATTERNS:
+            for mark in Mark:
+                if re.match(pattern.replace("?", mark), self.grid.cells):
+                    return [match.start() for match in re.finditer(r"\?", pattern)]
+        return []
+
+    def make_move_to(self, index: int) -> Move:
+        if self.grid.cells[index] != " ":
+            raise InvalidMove("Cell is not empty")
+        return Move(
+            mark=self.current_mark,
+            cell_index=index,
+            before_state=self,
+            after_state=GameState(
+                Grid(
+                    self.grid.cells[:index]
+                    + self.current_mark
+                    + self.grid.cells[index + 1 :]
+                ),
+                self.starting_mark,
+            ),
+        )
+
+    @cached_property
+    def possible_moves(self) -> list[int]:
+        moves = []
+        if not self.game_over:
+            for match in re.finditer(r"\s", self.grid.cells):
+                moves.append(self.make_move_to(match.start()))
+        return moves
