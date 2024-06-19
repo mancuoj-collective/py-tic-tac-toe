@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import enum
 import random
 import re
@@ -24,7 +26,7 @@ class Mark(str, enum.Enum):
     NAUGHT = "O"
 
     @property
-    def other(self) -> "Mark":
+    def other(self) -> Mark:
         return Mark.CROSS if self is Mark.NAUGHT else Mark.NAUGHT
 
 
@@ -52,8 +54,8 @@ class Grid:
 class Move:
     mark: Mark
     cell_index: int
-    before_state: "GameState"
-    after_state: "GameState"
+    before_state: GameState
+    after_state: GameState
 
 
 @dataclass(frozen=True)

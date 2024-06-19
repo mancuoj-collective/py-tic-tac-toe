@@ -1,7 +1,7 @@
 [project]
 name = "tic-tac-toe"
 version = "0.1.0"
-description = "Add your description here"
+description = "A simple tic-tac-toe game written in Python"
 authors = [{ name = "mancuoj", email = "mancuoj@gmail.com" }]
 dependencies = []
 readme = "README.md"
